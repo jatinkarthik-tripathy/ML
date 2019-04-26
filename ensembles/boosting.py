@@ -1,5 +1,5 @@
 import pandas as pd
-from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.model_selection import train_test_split
 from sklearn.datasets import load_iris
 from sklearn.ensemble import GradientBoostingClassifier, AdaBoostClassifier
 
@@ -18,7 +18,7 @@ accuracy = clf.score(X_test, y_test)
 print(f'GradBoost Accuracy: {accuracy}')
 
 
-#GradBoost implemented on Decision Trees
+#AdaBoost implemented on Decision Trees
 clf = AdaBoostClassifier(n_estimators=trees)
 clf.fit(X_train, y_train)
 accuracy = clf.score(X_test, y_test)
