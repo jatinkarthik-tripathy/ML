@@ -29,7 +29,7 @@ def sigmoid(z):
     return 1 / (1 + np.exp(-z))
 
 
-def train(x, y, theta):
+def train(x, y, theta, optimizer=True):
     # predicting values
     z = np.dot(x, theta)
     h = sigmoid(z)
@@ -37,9 +37,13 @@ def train(x, y, theta):
     # getting cost for prediction
     cost = (-y*np.log(h)-(1-y)*np.log(1-h)).mean()
 
-    # optimization
-    gradient = np.dot(x.T, (h - y)) / y.size
-    theta = adam(gradient, theta)
+    if optimizer:
+        # optimization
+        gradient = np.dot(x.T, (h - y)) / y.size
+        theta = adam(gradient, theta)
+    else:
+        gradient = np.dot(x.T, (h - y)) / y.size
+        theta = theta - gradient
     return theta, cost
 
 
@@ -61,16 +65,21 @@ def run():
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2)
 
+    theta_adam = np.zeros(X_train.shape[1])
     theta = np.zeros(X_train.shape[1])
 
    # training loop
     for _ in range(10):
-        theta, cost = train(X_train, y_train, theta)
+        theta_adam, cost = train(X_train, y_train, theta)
 
+    for _ in range(10):
+        theta, cost = train(X_train, y_train, theta, optimizer=False)
+
+    predict_adam = test(X_test, theta_adam)
     predict = test(X_test, theta)
 
-    print(f'confidence: {(predict==y_test).mean()}')
-
+    print(f'confidence adam: {(predict_adam==y_test).mean()}')
+    print(f'confidence  g-d: {(predict==y_test).mean()}')
 
 if __name__ == '__main__':
     run()
